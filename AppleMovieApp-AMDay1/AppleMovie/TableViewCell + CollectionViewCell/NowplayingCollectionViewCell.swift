@@ -16,5 +16,7 @@ class NowplayingCollectionViewCell: UICollectionViewCell {
     @IBOutlet weak var releaselabel: UILabel!
     @IBOutlet weak var ratinglabel: UILabel!
     @IBOutlet weak var votinglabel: UILabel!
+    @IBOutlet weak var containerView: UIView!
+    
     
 }

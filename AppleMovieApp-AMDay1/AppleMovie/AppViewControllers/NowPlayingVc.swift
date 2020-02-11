@@ -9,7 +9,8 @@
 import UIKit
 import CoreData
 import Kingfisher
-class NowPlayingVc: UIViewController, UICollectionViewDelegate, UICollectionViewDataSource{
+
+class NowPlayingVc: UIViewController, UICollectionViewDelegate, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {
     
     
 
@@ -36,6 +37,11 @@ class NowPlayingVc: UIViewController, UICollectionViewDelegate, UICollectionView
         cell.layer.shadowRadius = 20
         cell.layer.shadowOpacity = 0.5
         cell.layer.masksToBounds = false
+        cell.containerView.layer.cornerRadius = 20
+       cell.containerView.layer.masksToBounds = true
+        
+        
+
         
         let MoviestoShowinCell = getMoviesArrayData[indexPath.row]
         cell.movienamelabel.text = MoviestoShowinCell.title
@@ -66,11 +72,20 @@ class NowPlayingVc: UIViewController, UICollectionViewDelegate, UICollectionView
 
     }
 
+    
+    func collectionView(collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, insetForSectionAtIndex section: Int) -> UIEdgeInsets {
+        return UIEdgeInsets(top: 10, left: 10, bottom: 0, right: 10)
+    }
+
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
+        return CGSize (width: self.collectionviewnp.frame.width-20, height: self.collectionviewnp.frame.height-20)
+    }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         collectionviewnp.delegate = self
         collectionviewnp.dataSource = self
-        //pagenumber = 1
+        pagenumber = 1
         getsSearchMovies(pagenumber: pagenumber, moviescateogry: "now_playing")
         print(getMoviesArrayData)
     }

@@ -18,14 +18,6 @@ struct AppleMoviesData: Codable
     var id:Int
     var popularity:Double
     var vote_count:Int
+    
 }
-//var id:Int
-//var vote_count:Int
-//var vote_average:Double
-//var popularity:Double
-//var title:String
-//var overview:String
-//var release_date:String
-//var poster_path:String
-//var original_language:String
-//var backdrop_path:String
+
