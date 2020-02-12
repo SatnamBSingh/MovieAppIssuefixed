@@ -48,8 +48,8 @@ class SearchViewController: UIViewController,UISearchDisplayDelegate,UISearchBar
             cell2.searchpopularitylbl.text = String(moviestoshow.popularity)
             cell2.searchvotecnt.text = String(moviestoshow.vote_count)
             DispatchQueue.main.async {
-                 cell2.serachimgvw2.kf.setImage(with: URL(string: JsonParseData.JsonMoviesData.imageurl + moviestoshow.poster_path), placeholder: nil, options: [], progressBlock: nil, completionHandler: nil)
-                cell2.serachimgvw1.kf.setImage(with: URL(string: JsonParseData.JsonMoviesData.imageurl + moviestoshow.poster_path), placeholder: nil, options: [], progressBlock: nil, completionHandler: nil)
+                 cell2.serachimgvw2.kf.setImage(with: URL(string: JsonParseData.jsonMoviesData.imageurl + moviestoshow.poster_path), placeholder: nil, options: [], progressBlock: nil, completionHandler: nil)
+                cell2.serachimgvw1.kf.setImage(with: URL(string: JsonParseData.jsonMoviesData.imageurl + moviestoshow.poster_path), placeholder: nil, options: [], progressBlock: nil, completionHandler: nil)
             }
            
             return cell2
@@ -136,7 +136,7 @@ class SearchViewController: UIViewController,UISearchDisplayDelegate,UISearchBar
     }
     func getsSearchMovies(pagenumber: Int, serachtext: String){
        
-        Searchjson.SearchMoviesData.JsonURLS(string: serachtext, page: pagenumber, completetion: { (success, model) in
+        Searchjson.searchMoviesData.jsonURLS(string: serachtext, page: pagenumber, completetion: { (success, model) in
             guard success else{
                 return
             }

@@ -9,16 +9,16 @@
 import Foundation
 
 public class Searchjson {
-    static let SearchMoviesData = Searchjson()
-    func JsonURLS(string: String, page: Int, completetion : (Bool, searchmodel?) -> ()) {
-        let PageNum = String(page)
+    static let searchMoviesData = Searchjson()
+    func jsonURLS(string: String, page: Int, completetion : (Bool, searchmodel?) -> ()) {
+        let pageNum = String(page)
 
-        let Pathkey = "?api_key=60af9fe8e3245c53ad9c4c0af82d56d6&language=en-US&page=\(PageNum)&query=\(string)"
-        let moviesURL = "https://api.themoviedb.org/3/search/movie" + Pathkey
+        let pathkey = "?api_key=60af9fe8e3245c53ad9c4c0af82d56d6&language=en-US&page=\(pageNum)&query=\(string)"
+        let moviesURL = "https://api.themoviedb.org/3/search/movie" + pathkey
         
         if let url = URL(string: moviesURL) {
             if let data = try? Data(contentsOf: url){
-                guard let model =  MoviesJsonParsing(json: data) else {
+                guard let model =  moviesJsonParsing(json: data) else {
                     completetion(false, nil)
                     return
                 }
@@ -26,11 +26,11 @@ public class Searchjson {
             }
         }
     }
-    func MoviesJsonParsing(json: Data) -> searchmodel?{
+    func moviesJsonParsing(json: Data) -> searchmodel?{
         let decoder =  JSONDecoder()
         var searchmovies: searchmodel?
-        if let SearchMoviesJsonData = try? decoder.decode(searchmodel.self, from: json){
-            searchmovies = SearchMoviesJsonData
+        if let searchMoviesJsonData = try? decoder.decode(searchmodel.self, from: json){
+            searchmovies = searchMoviesJsonData
         }
         return searchmovies
 

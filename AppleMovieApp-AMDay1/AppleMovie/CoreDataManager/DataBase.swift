@@ -11,18 +11,17 @@ import CoreData
 import UIKit
 class DataBase {
     static let manager = DataBase()
+    
     static var nowPlayingMovies = [AppleMoviesData]()
     static var topRatedMovies = [TopRatedMovies]()
-    static var upcomingMovies = [UpcomingMovies]()
+    static var upcomingMovies = [AppleMoviesData]()
     let appDelegate = UIApplication.shared.delegate as! AppDelegate
     var moviesdata:AppleMoviesData?
     
-    func SavemoviesData(movies: [AppleMoviesData]){
-        
-    }
+  
 
     //Insert into coredata
-    func InsertData(){
+    func insertData(){
         let context = appDelegate.persistentContainer.viewContext
         let moviObj:NSObject = NSEntityDescription.insertNewObject(forEntityName: "AppleMovies", into: context)
         // moviObj.setValue(self.orginal.text, forKey: "AppleMovies")
@@ -50,13 +49,11 @@ class DataBase {
         }
     }
    
-    //coredata function
+    //Fetchdata from coredata
     func readFromCoreData()
     {
         let delegate = UIApplication.shared.delegate as! AppDelegate
-        
         let context = delegate.persistentContainer.viewContext
-        
         let request = NSFetchRequest<NSFetchRequestResult>(entityName: "AppleMovies")
         do
         {
@@ -70,14 +67,12 @@ class DataBase {
                 let ids = data.value(forKey: "id") as! Double
                 let img = data.value(forKey: "poster_path") as! String
             }
-//                        if moviesdata.count > 0
-//                        {
-//                         //   UITableView.reloadData()
-//                        }
+
         }
         catch
         {
-            
+            print(error.localizedDescription)
+
         }
     }
 

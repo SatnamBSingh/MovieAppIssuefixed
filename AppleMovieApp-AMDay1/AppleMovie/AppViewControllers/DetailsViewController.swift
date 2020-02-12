@@ -11,13 +11,14 @@ import Kingfisher
 class DetailsViewController: UIViewController {
 
     var getMoviesArrayData = [AppleMoviesData]()
-    var movie:AppleMoviesData?
-
-    var GetMovieScreenname:String?
+    var movie:AppleMoviesData? 
+    var getMovieCatoegry:String?
+    
     @IBOutlet weak var cancelbuttonoutlet: UIButton!
     @IBAction func cancelButton(_ sender: Any) {
+        navigationController?.popToRootViewController(animated: true)
         self.dismiss(animated: true, completion: nil)
-        performSegue(withIdentifier: "Backsegue", sender: IndexPath.self)
+        //performSegue(withIdentifier: "Backsegue", sender: IndexPath.self)
     }
     
     
@@ -27,17 +28,19 @@ class DetailsViewController: UIViewController {
     @IBOutlet var languagelabel: UILabel!
     @IBOutlet var votecountlabel: UILabel!
     @IBOutlet var descriptionlabel: UILabel!
+    @IBOutlet weak var popularity: UILabel!
     
     override func viewDidLoad() {
         super.viewDidLoad()
         movienamelabel.text = movie!.title
-        languagelabel.text = "\(movie!.popularity)"
-        movieimageview.kf.setImage(with: URL(string: JsonParseData.JsonMoviesData.imageurl + movie!.poster_path), placeholder: nil, options: [], progressBlock: nil, completionHandler: nil)
+        popularity.text = "\(movie!.popularity)"
+        movieimageview.kf.setImage(with: URL(string: JsonParseData.jsonMoviesData.imageurl + movie!.poster_path), placeholder: nil, options: [], progressBlock: nil, completionHandler: nil)
         votecountlabel.text = "\(movie!.vote_count)"
         descriptionlabel.text = movie?.overview
+        languagelabel.text = movie?.original_language
         cancelbuttonoutlet.layer.cornerRadius = 15
-        if let receivename = GetMovieScreenname{
-            moviescateogrylbl.text = receivename
+        if let receiveName = getMovieCatoegry{
+            moviescateogrylbl.text = receiveName
         }
         
         // Do any additional setup after loading the view.

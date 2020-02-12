@@ -13,16 +13,19 @@ class UpComingViewController: UIViewController,UITableViewDelegate,UITableViewDa
     var getMoviesArrayData = [AppleMoviesData]()
     var movies:AppleMoviesData?
     var movieDescription:String!
-
+   var pagenumber = 1
+    
+    
     @IBOutlet var upcomingtableV: UITableView!
 
     override func viewDidLoad() {
         super.viewDidLoad()
         upcomingtableV.delegate = self
         upcomingtableV.dataSource = self
-        Upcoming.JsonMoviesData.JsonURLS(Moviescateogry: "upcoming", page: 2)
-        getMoviesArrayData = Upcoming.JsonMoviesData.MoviesDataArray
-        //upcomingtableV.reloadData()
+        JsonParseData.jsonMoviesData.jsonURLS(Moviescateogry: "upcoming", page: 1)
+        getMoviesArrayData = Upcoming.jsonMoviesData.moviesDataArray
+        pagenumber = 1
+        getPageCount(pagenumber: pagenumber, moviescateogry: "upcoming")
         print(getMoviesArrayData)
         // Do any additional setup after loading the view.
     }
@@ -39,22 +42,27 @@ class UpComingViewController: UIViewController,UITableViewDelegate,UITableViewDa
         let cell = tableView.dequeueReusableCell(withIdentifier: "UpcomingTableViewCell", for: indexPath) as! UpcomingTableViewCell
         cell.upcomingImgView.layer.cornerRadius = 10
         cell.upcomingImgView.clipsToBounds = true
-        let MoviestoShowinCell = getMoviesArrayData[indexPath.row]
-        cell.mvnameUpcm.text = MoviestoShowinCell.title
-        cell.releasedateupcm.text = MoviestoShowinCell.release_date
-        cell.popularityupcm.text = String(MoviestoShowinCell.popularity)
-        cell.votecountupcm.text = String(MoviestoShowinCell.vote_count)
+        let moviestoShow = getMoviesArrayData[indexPath.row]
+        cell.mvnameUpcm.text = moviestoShow.title
+        cell.releasedateupcm.text = moviestoShow.release_date
+        cell.popularityupcm.text = String(moviestoShow.popularity)
+        cell.votecountupcm.text = String(moviestoShow.vote_count)
         cell.selectionStyle = .none
-     cell.upcomingImgView.kf.setImage(with: URL(string: JsonParseData.JsonMoviesData.imageurl + MoviestoShowinCell.poster_path), placeholder: nil, options: [], progressBlock: nil, completionHandler: nil)
-       // cell.upcomingImgView.kf.setImage(with: URL(string: JsonParseData.JsonMoviesData.imageurl + MoviestoShowinCell.poster_path), placeholder: #imageLiteral(resourceName: "placeholder"))
-
-        //        let string = "https://image.tmdb.org/t/p/w200/zPQzLZnfVw9fbXyxxglyOsmQBlu.jpg"
-//        if let image = getImage(from: string){
-//            cell.upcomingImgView.image = image
-//        }
+     cell.upcomingImgView.kf.setImage(with: URL(string: JsonParseData.jsonMoviesData.imageurl + moviestoShow.poster_path), placeholder: nil, options: [], progressBlock: nil, completionHandler: nil)
+     
 
         return cell
     }
+    
+    func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
+        DispatchQueue.global().async {
+            if indexPath.row == self.getMoviesArrayData.count-1 {
+                self.pagenumber = self.pagenumber + 1
+                self.getPageCount(pagenumber: self.pagenumber, moviescateogry: "upcoming")
+            }
+        }
+    }
+    
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         let currentcell = tableView.cellForRow(at: indexPath) as! UpcomingTableViewCell
         let movie = getMoviesArrayData[indexPath.row]
@@ -72,7 +80,17 @@ class UpComingViewController: UIViewController,UITableViewDelegate,UITableViewDa
             }
             let detailsvc =  segue.destination as! DetailsViewController
             detailsvc.movie = movie
-            detailsvc.GetMovieScreenname = name
+            detailsvc.getMovieCatoegry = name
         }
     }
+    
+    func getPageCount(pagenumber: Int, moviescateogry: String){
+        
+        JsonParseData.jsonMoviesData.jsonURLS(Moviescateogry: moviescateogry, page: pagenumber)
+        getMoviesArrayData += JsonParseData.jsonMoviesData.moviesDataArray
+        DispatchQueue.main.async {
+            self.upcomingtableV.reloadData()
+        }
+    }
+    
 }

@@ -8,7 +8,7 @@
 
 import Foundation
 
-struct upcomingModel: Codable {
-    var results:[UpcomingMovies]
-
-}
+//struct upcomingModel: Codable {
+//    var results:[UpcomingMovies]
+//
+//}

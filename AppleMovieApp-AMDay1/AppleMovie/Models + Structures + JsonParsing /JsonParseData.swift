@@ -9,26 +9,26 @@
 import Foundation
 
 public class JsonParseData{
-    static let JsonMoviesData = JsonParseData()
-    var MoviesDataArray = [AppleMoviesData]()
+    static let jsonMoviesData = JsonParseData()
+    var moviesDataArray = [AppleMoviesData]()
     let imageurl =  "https://image.tmdb.org/t/p/w200"
 
-    func JsonURLS( Moviescateogry: String, page: Int) {
-        let PageNum = String(page)
+    func jsonURLS( Moviescateogry: String, page: Int) {
+        let pageNum = String(page)
        
-        let Pathkey = "?api_key=60af9fe8e3245c53ad9c4c0af82d56d6&language=en-US&page=\(PageNum)"
-        let moviesURL = "https://api.themoviedb.org/3/movie/" + Moviescateogry + Pathkey 
+        let pathkey = "?api_key=60af9fe8e3245c53ad9c4c0af82d56d6&language=en-US&page=\(pageNum)"
+        let moviesURL = "https://api.themoviedb.org/3/movie/" + Moviescateogry + pathkey 
         
         if let url = URL(string: moviesURL) {
             if let data = try? Data(contentsOf: url){
-                MoviesJsonParsing(json: data)
+                moviesJsonParsing(json: data)
             }
         }
     }
-    func MoviesJsonParsing(json: Data) {
+    func moviesJsonParsing(json: Data) {
         let decoder =  JSONDecoder()
-        if let NowPlayingMoviesJsonData = try? decoder.decode(AppleMoviesJsonModel.self, from: json){
-            MoviesDataArray = NowPlayingMoviesJsonData.results
+        if let nowplayingMoviesJsonData = try? decoder.decode(AppleMoviesJsonModel.self, from: json){
+            moviesDataArray = nowplayingMoviesJsonData.results
         }
         
     }

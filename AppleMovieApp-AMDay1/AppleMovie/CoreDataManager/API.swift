@@ -14,6 +14,7 @@ class API {
     private var searchedMovies = [AppleMoviesData]()
 
 
+    
     func fetchResults(url: URL, completion: @escaping (Data)->()){
         
         let urlRequest = URLRequest(url: url)
@@ -31,6 +32,14 @@ class API {
         
         dataTask.resume()
     }
+    
+    func fetchingMovies(lang: String, page: Int, category: Category){
+        
+
+    }
+
+    
+    
     
     func storeMoviedata(data: Data){
         

@@ -19,21 +19,27 @@ class TopRatedViewController: UIViewController,UITableViewDelegate,UITableViewDa
     @IBOutlet var populartableview: UITableView!
     @IBOutlet var toprtdcollectionView: UICollectionView!
     
+    
+    @IBAction func seeAllButtton(_ sender: Any) {
+        let showallMovies = self.storyboard?.instantiateViewController(withIdentifier: "ShowAllMoviesViewController") as! ShowAllMoviesViewController
+        navigationController?.pushViewController(showallMovies, animated: true)
+    }
+    
+    
+    
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         populartableview.delegate = self
         populartableview.dataSource = self
-        //toprtdcollectionView.delegate = self
-        //toprtdcollectionView.dataSource = self
-    
-        topratedcollectionvw.JsonMoviesData.JsonURLS(Moviescateogry: "top_rated", page: 2)
-        getMoviesArrayData = JsonParseData.JsonMoviesData.MoviesDataArray
-        
-//        jsonparsingfortoprated.JsonMoviesData.JsonURLS(Moviescateogry: "popular", page: 2)
-//        getMoviesArrayData = JsonParseData.JsonMoviesData.MoviesDataArray
-        populartableview.reloadData()
         pagenumber = 1
-        //getsSearchMovies(pagenumber: pagenumber, moviescateogry: "now_playing")
+
+        JsonParseData.jsonMoviesData.jsonURLS(Moviescateogry: "top_rated", page: pagenumber)
+        getMoviesArrayData = JsonParseData.jsonMoviesData.moviesDataArray
+        
+        jsonparsingfortoprated.jsonMoviesData.jsonURLS(Moviescateogry: "popular", page: pagenumber)
+        getMoviesArrayData = JsonParseData.jsonMoviesData.moviesDataArray
+        populartableview.reloadData()
     }
    
     
@@ -55,7 +61,7 @@ class TopRatedViewController: UIViewController,UITableViewDelegate,UITableViewDa
         cell.topratedDescriptionlbl.text = MoviestoShowinCell.overview
         cell.topratedvoteavglbl.text = String(MoviestoShowinCell.vote_average)
         cell.topvotecountlbl.text = String(MoviestoShowinCell.vote_count)
-        cell.toprtdImageview.kf.setImage(with: URL(string: JsonParseData.JsonMoviesData.imageurl + MoviestoShowinCell.poster_path), placeholder: nil, options: [], progressBlock: nil, completionHandler: nil)
+        cell.toprtdImageview.kf.setImage(with: URL(string: JsonParseData.jsonMoviesData.imageurl + MoviestoShowinCell.poster_path), placeholder: nil, options: [], progressBlock: nil, completionHandler: nil)
  
         return cell
     }
@@ -69,6 +75,16 @@ class TopRatedViewController: UIViewController,UITableViewDelegate,UITableViewDa
         performSegue(withIdentifier: "toprateddetails", sender: movie)
     }
     
+    func collectionView(_ collectionView: UICollectionView, willDisplay cell: UICollectionViewCell, forItemAt indexPath: IndexPath) {
+        DispatchQueue.global().async {
+            if indexPath.row == self.getMoviesArrayData.count-1 {
+                self.pagenumber = self.pagenumber + 1
+                self.pageReload(pagenumber: self.pagenumber, moviescateogry: "top_rated")
+                
+            }
+        }
+    }
+    
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
         return CGSize(width: self.view.frame.width-2*24, height: 300)
     }
@@ -80,7 +96,7 @@ class TopRatedViewController: UIViewController,UITableViewDelegate,UITableViewDa
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumInteritemSpacingForSectionAt section: Int) -> CGFloat {
         return 2
     }
-    let Screenname = "TopRated"
+    let screenname = "TopRated"
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         if (segue.identifier == "toprateddetails") {
             guard let movie  = sender as? AppleMoviesData else{
@@ -88,7 +104,7 @@ class TopRatedViewController: UIViewController,UITableViewDelegate,UITableViewDa
             }
             let detailsvc =  segue.destination as! DetailsViewController
             detailsvc.movie = movie
-            detailsvc.GetMovieScreenname = Screenname
+            detailsvc.getMovieCatoegry = screenname
 
         }
     }
@@ -114,7 +130,7 @@ class TopRatedViewController: UIViewController,UITableViewDelegate,UITableViewDa
             cell.releaseddatelbl.text = MoviestoShowinCell.release_date
             cell.votecountlbl.text = String(MoviestoShowinCell.vote_count)
             cell.selectionStyle = .none
-            cell.MVImageView.kf.setImage(with: URL(string: JsonParseData.JsonMoviesData.imageurl + MoviestoShowinCell.poster_path), placeholder: nil, options: [], progressBlock: nil, completionHandler: nil)
+            cell.MVImageView.kf.setImage(with: URL(string: JsonParseData.jsonMoviesData.imageurl + MoviestoShowinCell.poster_path), placeholder: nil, options: [], progressBlock: nil, completionHandler: nil)
            
             if indexPath.row != 1 {
                 
@@ -157,15 +173,15 @@ class TopRatedViewController: UIViewController,UITableViewDelegate,UITableViewDa
         DispatchQueue.global().async {
             if indexPath.row == self.getMoviesArrayData.count-1 {
                 self.pagenumber = self.pagenumber + 1
-                self.getsSearchMovies(pagenumber: self.pagenumber, moviescateogry: "top_rated")
+                self.pageReload(pagenumber: self.pagenumber, moviescateogry: "popular")
                 
             }
         }
     }
-    func getsSearchMovies(pagenumber: Int, moviescateogry: String){
+    func pageReload(pagenumber: Int, moviescateogry: String){
         
-        JsonParseData.JsonMoviesData.JsonURLS(Moviescateogry: moviescateogry, page: pagenumber)
-        getMoviesArrayData += JsonParseData.JsonMoviesData.MoviesDataArray
+        JsonParseData.jsonMoviesData.jsonURLS(Moviescateogry: moviescateogry, page: pagenumber)
+        getMoviesArrayData += JsonParseData.jsonMoviesData.moviesDataArray
         DispatchQueue.main.async {
             self.populartableview.reloadData()
         }

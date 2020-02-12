@@ -18,6 +18,6 @@ struct AppleMoviesData: Codable
     var id:Int
     var popularity:Double
     var vote_count:Int
-    
+    var original_language:String
 }
 

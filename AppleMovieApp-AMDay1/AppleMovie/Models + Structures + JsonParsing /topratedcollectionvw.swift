@@ -8,25 +8,25 @@
 
 import Foundation
 public class topratedcollectionvw {
-    static let JsonMoviesData = topratedcollectionvw()
-    var MoviesDataArray = [TopRatedMovies]()
-    func JsonURLS( Moviescateogry: String, page: Int) -> (){
-        let PageNum = String(page)
+    static let jsonMoviesData = topratedcollectionvw()
+    var moviesDataArray = [TopRatedMovies]()
+    func jsonURLS( Moviescateogry: String, page: Int) -> (){
+        let pageNum = String(page)
 
-        let Pathkey = "api_key=60af9fe8e3245c53ad9c4c0af82d56d6&language=en-US&page=\(PageNum)"
-        let moviesURL = "https://api.themoviedb.org/3/movie/" + Moviescateogry + Pathkey
+        let pathkey = "api_key=60af9fe8e3245c53ad9c4c0af82d56d6&language=en-US&page=\(pageNum)"
+        let moviesURL = "https://api.themoviedb.org/3/movie/" + Moviescateogry + pathkey
         
         if let url = URL(string: moviesURL) {
             if let data = try? Data(contentsOf: url){
-                MoviesJsonParsing(json: data)
+                moviesJsonParsing(json: data)
                 
             }
         }
     }
-    func MoviesJsonParsing(json: Data) {
+    func moviesJsonParsing(json: Data) {
         let decoder =  JSONDecoder()
-        if let TopRatedMovies = try? decoder.decode(PopularMoviesModel.self, from: json){
-            MoviesDataArray = TopRatedMovies.results
+        if let topRatedMovies = try? decoder.decode(PopularMoviesModel.self, from: json){
+            moviesDataArray = topRatedMovies.results
         }
         
     }

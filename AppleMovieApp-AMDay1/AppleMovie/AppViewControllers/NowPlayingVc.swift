@@ -7,19 +7,19 @@
 //
 
 import UIKit
-import CoreData
 import Kingfisher
 
 class NowPlayingVc: UIViewController, UICollectionViewDelegate, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {
-    
+   
+    var getMoviesArrayData = [AppleMoviesData]()
+    var movieDescription:String!
+    var pagenumber = 1
+    var api = API()
+    var dataBase = DataBase()
     
 
     @IBOutlet weak var collectionviewnp: UICollectionView!
-    var getMoviesArrayData = [AppleMoviesData]()
-    let delegate = UIApplication.shared.delegate as! AppDelegate
-    var movieDescription:String!
-    var pagenumber = 1
-    
+   
     
     func numberOfSections(in collectionView: UICollectionView) -> Int {
         return 2
@@ -40,16 +40,13 @@ class NowPlayingVc: UIViewController, UICollectionViewDelegate, UICollectionView
         cell.containerView.layer.cornerRadius = 20
        cell.containerView.layer.masksToBounds = true
         
-        
-
-        
         let MoviestoShowinCell = getMoviesArrayData[indexPath.row]
         cell.movienamelabel.text = MoviestoShowinCell.title
         cell.moviedescriptionlabel.text = MoviestoShowinCell.overview
         cell.releaselabel.text = MoviestoShowinCell.release_date
         cell.ratinglabel.text = String(MoviestoShowinCell.vote_average)
         cell.votinglabel.text = String(MoviestoShowinCell.vote_count)
-        cell.movieimageview.kf.setImage(with: URL(string: JsonParseData.JsonMoviesData.imageurl + MoviestoShowinCell.poster_path), placeholder: nil, options: [], progressBlock: nil, completionHandler: nil)
+        cell.movieimageview.kf.setImage(with: URL(string: JsonParseData.jsonMoviesData.imageurl + MoviestoShowinCell.poster_path), placeholder: nil, options: [], progressBlock: nil, completionHandler: nil)
         
         return cell
     }
@@ -58,7 +55,7 @@ class NowPlayingVc: UIViewController, UICollectionViewDelegate, UICollectionView
         DispatchQueue.global().async {
             if indexPath.row == self.getMoviesArrayData.count-1 {
                 self.pagenumber = self.pagenumber + 1
-                self.getsSearchMovies(pagenumber: self.pagenumber, moviescateogry: "now_playing")
+                self.getPageCount(pagenumber: self.pagenumber, moviescateogry: "now_playing")
                 
             }
         }
@@ -74,11 +71,11 @@ class NowPlayingVc: UIViewController, UICollectionViewDelegate, UICollectionView
 
     
     func collectionView(collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, insetForSectionAtIndex section: Int) -> UIEdgeInsets {
-        return UIEdgeInsets(top: 10, left: 10, bottom: 0, right: 10)
+        return UIEdgeInsets(top: 0, left: 20, bottom: 0, right: 20)
     }
 
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-        return CGSize (width: self.collectionviewnp.frame.width-20, height: self.collectionviewnp.frame.height-20)
+        return CGSize (width: self.collectionviewnp.frame.width-40, height: self.collectionviewnp.frame.height-193)
     }
     
     override func viewDidLoad() {
@@ -86,8 +83,27 @@ class NowPlayingVc: UIViewController, UICollectionViewDelegate, UICollectionView
         collectionviewnp.delegate = self
         collectionviewnp.dataSource = self
         pagenumber = 1
-        getsSearchMovies(pagenumber: pagenumber, moviescateogry: "now_playing")
+       // JsonParseData.JsonMoviesData.JsonURLS(Moviescateogry: "now_playing", page: pagenumber)
+        //getMoviesArrayData = JsonParseData.JsonMoviesData.MoviesDataArray
+        collectionviewnp.reloadData()
+        getPageCount(pagenumber: pagenumber, moviescateogry: "now_playing")
         print(getMoviesArrayData)
+        
+        DispatchQueue.global().sync {
+           // self.api.fetchingMovies(lang: "en-US", page: 1, category: [])
+
+            DispatchQueue.main.asyncAfter(deadline: .now()+2.0, execute: {
+                let manageData = DataBase()
+                manageData.readFromCoreData()
+            })
+
+            DispatchQueue.main.asyncAfter(deadline: .now()+3) {
+
+               // self.getMoviesArrayData = dataBase
+                self.collectionviewnp.reloadData()
+            }
+        }
+
     }
     
     let Screenname = "NowPlaying"
@@ -98,13 +114,13 @@ class NowPlayingVc: UIViewController, UICollectionViewDelegate, UICollectionView
             }
             let detailsvc =  segue.destination as! DetailsViewController
             detailsvc.movie = movie
-            detailsvc.GetMovieScreenname = Screenname
+            detailsvc.getMovieCatoegry = Screenname
         }
     }
-    func getsSearchMovies(pagenumber: Int, moviescateogry: String){
+    func getPageCount(pagenumber: Int, moviescateogry: String){
         
-        JsonParseData.JsonMoviesData.JsonURLS(Moviescateogry: moviescateogry, page: pagenumber)
-        getMoviesArrayData += JsonParseData.JsonMoviesData.MoviesDataArray
+        JsonParseData.jsonMoviesData.jsonURLS(Moviescateogry: moviescateogry, page: pagenumber)
+        getMoviesArrayData += JsonParseData.jsonMoviesData.moviesDataArray
         DispatchQueue.main.async {
             self.collectionviewnp.reloadData()
         }
