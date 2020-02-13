@@ -8,14 +8,14 @@
 
 import Foundation
 
-struct Searchmovies: Codable
-{
-    var title:String
-    var overview:String
-    var release_date:String
-    var vote_average:Double
-    var poster_path:String
-    var id:Int
-    var popularity:Double
-    var vote_count:Int
-}
+//struct Searchmovies: Codable
+//{
+//    var title:String
+//    var overview:String
+//    var release_date:String
+//    var vote_average:Double
+//    var poster_path:String
+//    var id:Int
+//    var popularity:Double
+//    var vote_count:Int
+//}

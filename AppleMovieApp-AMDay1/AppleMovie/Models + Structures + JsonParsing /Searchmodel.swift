@@ -8,6 +8,6 @@
 
 import Foundation
 
-struct searchmodel:Codable {
-    var results: [Searchmovies]
-}
+//struct searchmodel:Codable {
+//    var results: [Searchmovies]
+//}

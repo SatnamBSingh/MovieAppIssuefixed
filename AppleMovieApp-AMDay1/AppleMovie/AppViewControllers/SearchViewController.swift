@@ -13,13 +13,13 @@ class SearchViewController: UIViewController,UISearchDisplayDelegate,UISearchBar
     
     @IBOutlet var tableviewsearches: UITableView!
     @IBOutlet var SearchBar: UISearchBar!
-    var Movies = [Searchmovies]()
-    var getMoviesArrayData = [AppleMoviesData]()
+    //   var Movies = [Searchmovies]()
+   // var getMoviesArrayData = [AppleMoviesData]()
     var movies:AppleMoviesData?
     var movieDescription:String!
-
+    var pagenumber = 1
     
-    var searchMovies = [Searchmovies]()
+    var searchMovies = [AppleMoviesData]()
     var searchActive = true
 
     
@@ -39,19 +39,19 @@ class SearchViewController: UIViewController,UISearchDisplayDelegate,UISearchBar
             let cell2 = tableView.dequeueReusableCell(withIdentifier: "SearchTableViewCell", for: indexPath) as! SearchTableViewCell
             cell2.serachimgvw1.layer.cornerRadius = 10
             cell2.serachimgvw1.clipsToBounds = true
-            cell2.serachimgvw2.layer.cornerRadius = 20
+            cell2.serachimgvw2.layer.cornerRadius = 15
             cell2.serachimgvw2.clipsToBounds = true
             
-            let moviestoshow = searchMovies[indexPath.row]
-            cell2.searchmovinmae.text = moviestoshow.title
-            cell2.searchreleasedlbl.text  = moviestoshow.release_date
-            cell2.searchpopularitylbl.text = String(moviestoshow.popularity)
-            cell2.searchvotecnt.text = String(moviestoshow.vote_count)
+            let moviestoShow = searchMovies[indexPath.row]
+            cell2.searchmovinmae.text = moviestoShow.title
+            cell2.searchreleasedlbl.text  = moviestoShow.release_date
+            cell2.searchpopularitylbl.text = String(moviestoShow.popularity)
+            cell2.searchvotecnt.text = String(moviestoShow.vote_count)
             DispatchQueue.main.async {
-                 cell2.serachimgvw2.kf.setImage(with: URL(string: JsonParseData.jsonMoviesData.imageurl + moviestoshow.poster_path), placeholder: nil, options: [], progressBlock: nil, completionHandler: nil)
-                cell2.serachimgvw1.kf.setImage(with: URL(string: JsonParseData.jsonMoviesData.imageurl + moviestoshow.poster_path), placeholder: nil, options: [], progressBlock: nil, completionHandler: nil)
+                cell2.serachimgvw2.kf.setImage(with: URL(string: JsonParseData.jsonMoviesData.imageurl + moviestoShow.poster_path), placeholder: nil, options: [], progressBlock: nil, completionHandler: nil)
+                cell2.serachimgvw1.kf.setImage(with: URL(string: JsonParseData.jsonMoviesData.imageurl + moviestoShow.poster_path), placeholder: nil, options: [], progressBlock: nil, completionHandler: nil)
             }
-           
+            
             return cell2
         }
     }
@@ -60,21 +60,31 @@ class SearchViewController: UIViewController,UISearchDisplayDelegate,UISearchBar
     }
     
 
+    func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
+        DispatchQueue.global().async {
+            if indexPath.row == self.searchMovies.count-1 {
+                self.pagenumber = self.pagenumber + 1
+                self.getPageCount(pagenumber: self.pagenumber, moviescateogry: "search")
+                
+            }
+        }
+    }
+    
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         if searchActive {
             searchActive = false
             let movie = searchMovies.remove(at: indexPath.row)
             self.searchMovies.insert(movie, at: 0)
             DispatchQueue.main.async {
-            self.tableviewsearches.reloadData()
+                self.tableviewsearches.reloadData()
             }
         }
         else{
-//            let currentcell = tableView.cellForRow(at: indexPath) as! SearchTableViewCell
-//            let movie = searchMovies[indexPath.row]
-//            movieDescription = currentcell.searchpopularitylbl.text
-//            movieDescription = currentcell.searchmovinmae.text
-           // performSegue(withIdentifier: "detailsfromsearch", sender: movie)
+            let currentCell = tableView.cellForRow(at: indexPath) as! SearchTableViewCell
+            let movie = searchMovies[indexPath.row]
+            movieDescription = currentCell.searchpopularitylbl.text
+            movieDescription = currentCell.searchmovinmae.text
+            performSegue(withIdentifier: "detailsfromsearch", sender: movie)
         }
     }
     
@@ -85,13 +95,14 @@ class SearchViewController: UIViewController,UISearchDisplayDelegate,UISearchBar
             guard let movie  = sender as? AppleMoviesData else{
                 return
             }
-            let detailsvc =  segue.destination as! DetailsViewController
-            detailsvc.movie = movie
+            let detailsVc =  segue.destination as! DetailsViewController
+            detailsVc.movie = movie
         }
     }
     
     @IBAction func cancelbutton(_ sender: Any) {
         SearchBar.text = ""
+        searchActive = false
         tableviewsearches.reloadData()
     }
     
@@ -101,7 +112,7 @@ class SearchViewController: UIViewController,UISearchDisplayDelegate,UISearchBar
             DispatchQueue.global().async {
                 self.searchActive = true
                 self.getsSearchMovies(pagenumber: 1, serachtext: searchText)
-            
+                
             }
         }
         else{
@@ -131,9 +142,12 @@ class SearchViewController: UIViewController,UISearchDisplayDelegate,UISearchBar
         SearchBar.delegate = self
         tableviewsearches.delegate = self
         tableviewsearches.dataSource = self
+        pagenumber = 1
+       // getPageCount(pagenumber: pagenumber, moviescateogry: "search")
 
         // Do any additional setup after loading the view.
     }
+    
     func getsSearchMovies(pagenumber: Int, serachtext: String){
        
         Searchjson.searchMoviesData.jsonURLS(string: serachtext, page: pagenumber, completetion: { (success, model) in
@@ -152,6 +166,14 @@ class SearchViewController: UIViewController,UISearchDisplayDelegate,UISearchBar
         })
     }
     
+    func getPageCount(pagenumber: Int, moviescateogry: String){
+        
+        JsonParseData.jsonMoviesData.jsonURLS(Moviescateogry: moviescateogry, page: pagenumber)
+        searchMovies += JsonParseData.jsonMoviesData.moviesDataArray
+        DispatchQueue.main.async {
+            self.tableviewsearches.reloadData()
+        }
+    }
 
     /*
     // MARK: - Navigation

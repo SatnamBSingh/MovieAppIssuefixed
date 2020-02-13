@@ -13,8 +13,9 @@ class UpComingViewController: UIViewController,UITableViewDelegate,UITableViewDa
     var getMoviesArrayData = [AppleMoviesData]()
     var movies:AppleMoviesData?
     var movieDescription:String!
-   var pagenumber = 1
-    
+    var pagenumber = 1
+    var api = API()
+    var dataBase = DataBase()
     
     @IBOutlet var upcomingtableV: UITableView!
 
@@ -27,6 +28,15 @@ class UpComingViewController: UIViewController,UITableViewDelegate,UITableViewDa
         pagenumber = 1
         getPageCount(pagenumber: pagenumber, moviescateogry: "upcoming")
         print(getMoviesArrayData)
+        
+        DispatchQueue.global().sync {
+            self.api.fetchingMovies(movieLanguage: "en-US", pageNumber: 1, category: .upcomingMovies)
+            let manageData = DataBase()
+            manageData.readFromCoreData(category: .upcomingMovies)
+            // self.getMoviesArrayData = dataBase
+            self.upcomingtableV.reloadData()
+        }
+        
         // Do any additional setup after loading the view.
     }
 
@@ -48,8 +58,8 @@ class UpComingViewController: UIViewController,UITableViewDelegate,UITableViewDa
         cell.popularityupcm.text = String(moviestoShow.popularity)
         cell.votecountupcm.text = String(moviestoShow.vote_count)
         cell.selectionStyle = .none
-     cell.upcomingImgView.kf.setImage(with: URL(string: JsonParseData.jsonMoviesData.imageurl + moviestoShow.poster_path), placeholder: nil, options: [], progressBlock: nil, completionHandler: nil)
-     
+        cell.upcomingImgView.kf.setImage(with: URL(string: JsonParseData.jsonMoviesData.imageurl + moviestoShow.poster_path), placeholder: nil, options: [], progressBlock: nil, completionHandler: nil)
+        
 
         return cell
     }
@@ -64,12 +74,12 @@ class UpComingViewController: UIViewController,UITableViewDelegate,UITableViewDa
     }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        let currentcell = tableView.cellForRow(at: indexPath) as! UpcomingTableViewCell
+        let currentCell = tableView.cellForRow(at: indexPath) as! UpcomingTableViewCell
         let movie = getMoviesArrayData[indexPath.row]
-        movieDescription = currentcell.mvnameUpcm.text
-        movieDescription = currentcell.popularityupcm.text
-       movieDescription = currentcell.votecountupcm.text
-     //Detailsfromupcoming
+        movieDescription = currentCell.mvnameUpcm.text
+        movieDescription = currentCell.popularityupcm.text
+        movieDescription = currentCell.votecountupcm.text
+        //Detailsfromupcoming
         performSegue(withIdentifier: "Detailsfromupcoming", sender: movie)
     }
     let name = "UpComing"

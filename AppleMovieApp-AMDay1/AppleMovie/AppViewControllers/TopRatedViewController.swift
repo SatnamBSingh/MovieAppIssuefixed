@@ -15,7 +15,10 @@ class TopRatedViewController: UIViewController,UITableViewDelegate,UITableViewDa
     var positionScroll:CGFloat = 0
     var movieDescription:String!
     var pagenumber = 1
-
+    var api = API()
+    var dataBase = DataBase()
+    
+    
     @IBOutlet var populartableview: UITableView!
     @IBOutlet var toprtdcollectionView: UICollectionView!
     
@@ -40,6 +43,17 @@ class TopRatedViewController: UIViewController,UITableViewDelegate,UITableViewDa
         jsonparsingfortoprated.jsonMoviesData.jsonURLS(Moviescateogry: "popular", page: pagenumber)
         getMoviesArrayData = JsonParseData.jsonMoviesData.moviesDataArray
         populartableview.reloadData()
+        
+        DispatchQueue.global().sync {
+            self.api.fetchingMovies(movieLanguage: "en-US", pageNumber: 1, category: .topRatedMovies)
+            self.api.fetchingMovies(movieLanguage: "en-US", pageNumber: 1, category: .popularMovies)
+            let manageData = DataBase()
+            manageData.readFromCoreData(category: .topRatedMovies)
+            // self.getMoviesArrayData = dataBase
+            self.populartableview.reloadData()
+            
+        }
+
     }
    
     
@@ -55,23 +69,23 @@ class TopRatedViewController: UIViewController,UITableViewDelegate,UITableViewDa
         cell.toprtdImageview.layer.cornerRadius = 10
         cell.toprtdImageview.clipsToBounds = true
         
-        let MoviestoShowinCell = getMoviesArrayData[indexPath.row]
-        cell.topratedNamelbl.text = MoviestoShowinCell.title
-        cell.topratedPopularitylbl.text = String(MoviestoShowinCell.popularity)
-        cell.topratedDescriptionlbl.text = MoviestoShowinCell.overview
-        cell.topratedvoteavglbl.text = String(MoviestoShowinCell.vote_average)
-        cell.topvotecountlbl.text = String(MoviestoShowinCell.vote_count)
-        cell.toprtdImageview.kf.setImage(with: URL(string: JsonParseData.jsonMoviesData.imageurl + MoviestoShowinCell.poster_path), placeholder: nil, options: [], progressBlock: nil, completionHandler: nil)
+        let moviestoShowinCell = getMoviesArrayData[indexPath.row]
+        cell.topratedNamelbl.text = moviestoShowinCell.title
+        cell.topratedPopularitylbl.text = String(moviestoShowinCell.popularity)
+        cell.topratedDescriptionlbl.text = moviestoShowinCell.overview
+        cell.topratedvoteavglbl.text = String(moviestoShowinCell.vote_average)
+        cell.topvotecountlbl.text = String(moviestoShowinCell.vote_count)
+        cell.toprtdImageview.kf.setImage(with: URL(string: JsonParseData.jsonMoviesData.imageurl + moviestoShowinCell.poster_path), placeholder: nil, options: [], progressBlock: nil, completionHandler: nil)
  
         return cell
     }
     
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        let currentcell = collectionView.cellForItem(at: indexPath) as! TopRatedCollectionViewCell
+        let currentCell = collectionView.cellForItem(at: indexPath) as! TopRatedCollectionViewCell
         let movie = getMoviesArrayData[indexPath.row]
-        movieDescription = currentcell.topratedDescriptionlbl.text
-        movieDescription = currentcell.topratedPopularitylbl.text
-        movieDescription = currentcell.topvotecountlbl.text
+        movieDescription = currentCell.topratedDescriptionlbl.text
+        movieDescription = currentCell.topratedPopularitylbl.text
+        movieDescription = currentCell.topvotecountlbl.text
         performSegue(withIdentifier: "toprateddetails", sender: movie)
     }
     
@@ -86,7 +100,7 @@ class TopRatedViewController: UIViewController,UITableViewDelegate,UITableViewDa
     }
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-        return CGSize(width: self.view.frame.width-2*24, height: 300)
+        return CGSize(width: self.view.frame.width, height: 300)
     }
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumLineSpacingForSectionAt section: Int) -> CGFloat {
@@ -96,15 +110,16 @@ class TopRatedViewController: UIViewController,UITableViewDelegate,UITableViewDa
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumInteritemSpacingForSectionAt section: Int) -> CGFloat {
         return 2
     }
+    
     let screenname = "TopRated"
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         if (segue.identifier == "toprateddetails") {
             guard let movie  = sender as? AppleMoviesData else{
                 return
             }
-            let detailsvc =  segue.destination as! DetailsViewController
-            detailsvc.movie = movie
-            detailsvc.getMovieCatoegry = screenname
+            let detailsVc =  segue.destination as! DetailsViewController
+            detailsVc.movie = movie
+            detailsVc.getMovieCatoegry = screenname
 
         }
     }
@@ -124,14 +139,14 @@ class TopRatedViewController: UIViewController,UITableViewDelegate,UITableViewDa
             let cell = tableView.dequeueReusableCell(withIdentifier: "TopRatedTableViewCell", for: indexPath) as! TopRatedTableViewCell
             cell.MVImageView.layer.cornerRadius = 10
             cell.MVImageView.clipsToBounds = true
-            let MoviestoShowinCell = getMoviesArrayData[indexPath.row]
-            cell.movienamelbl.text = MoviestoShowinCell.title
-            cell.popularitylbl.text = String(MoviestoShowinCell.popularity)
-            cell.releaseddatelbl.text = MoviestoShowinCell.release_date
-            cell.votecountlbl.text = String(MoviestoShowinCell.vote_count)
+            let moviestoShowinCell = getMoviesArrayData[indexPath.row]
+            cell.movienamelbl.text = moviestoShowinCell.title
+            cell.popularitylbl.text = String(moviestoShowinCell.popularity)
+            cell.releaseddatelbl.text = moviestoShowinCell.release_date
+            cell.votecountlbl.text = String(moviestoShowinCell.vote_count)
             cell.selectionStyle = .none
-            cell.MVImageView.kf.setImage(with: URL(string: JsonParseData.jsonMoviesData.imageurl + MoviestoShowinCell.poster_path), placeholder: nil, options: [], progressBlock: nil, completionHandler: nil)
-           
+            cell.MVImageView.kf.setImage(with: URL(string: JsonParseData.jsonMoviesData.imageurl + moviestoShowinCell.poster_path), placeholder: nil, options: [], progressBlock: nil, completionHandler: nil)
+            
             if indexPath.row != 1 {
                 
             }
@@ -140,14 +155,14 @@ class TopRatedViewController: UIViewController,UITableViewDelegate,UITableViewDa
             }
             
             return cell
-
+            
         }
         
-         let cell1 = tableView.dequeueReusableCell(withIdentifier: "TopRatedMoviesTableViewCell", for: indexPath) as! TopRatedMoviesTableViewCell
-          cell1.topratedcollectionview.reloadData()
-          cell1.separatorInset = UIEdgeInsets(top: 0, left: 32, bottom: 0, right: 32)
-
-         return cell1
+        let cell1 = tableView.dequeueReusableCell(withIdentifier: "TopRatedMoviesTableViewCell", for: indexPath) as! TopRatedMoviesTableViewCell
+        cell1.topratedcollectionview.reloadData()
+        cell1.separatorInset = UIEdgeInsets(top: 0, left: 32, bottom: 0, right: 32)
+        
+        return cell1
     }
     
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
@@ -161,11 +176,11 @@ class TopRatedViewController: UIViewController,UITableViewDelegate,UITableViewDa
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         
-        let currentcell = tableView.cellForRow(at: indexPath) as! TopRatedTableViewCell
+        let currentCell = tableView.cellForRow(at: indexPath) as! TopRatedTableViewCell
         let movie = getMoviesArrayData[indexPath.row]
-        movieDescription = currentcell.movienamelbl.text
-        movieDescription = currentcell.popularitylbl.text
-        movieDescription = currentcell.votecountlbl.text
+        movieDescription = currentCell.movienamelbl.text
+        movieDescription = currentCell.popularitylbl.text
+        movieDescription = currentCell.votecountlbl.text
         performSegue(withIdentifier: "toprateddetails", sender: movie)
     }
     

@@ -10,7 +10,7 @@ import Foundation
 
 public class Searchjson {
     static let searchMoviesData = Searchjson()
-    func jsonURLS(string: String, page: Int, completetion : (Bool, searchmodel?) -> ()) {
+    func jsonURLS(string: String, page: Int, completetion : (Bool, AppleMoviesJsonModel?) -> ()) {
         let pageNum = String(page)
 
         let pathkey = "?api_key=60af9fe8e3245c53ad9c4c0af82d56d6&language=en-US&page=\(pageNum)&query=\(string)"
@@ -26,10 +26,10 @@ public class Searchjson {
             }
         }
     }
-    func moviesJsonParsing(json: Data) -> searchmodel?{
+    func moviesJsonParsing(json: Data) -> AppleMoviesJsonModel?{
         let decoder =  JSONDecoder()
-        var searchmovies: searchmodel?
-        if let searchMoviesJsonData = try? decoder.decode(searchmodel.self, from: json){
+        var searchmovies: AppleMoviesJsonModel?
+        if let searchMoviesJsonData = try? decoder.decode(AppleMoviesJsonModel.self, from: json){
             searchmovies = searchMoviesJsonData
         }
         return searchmovies

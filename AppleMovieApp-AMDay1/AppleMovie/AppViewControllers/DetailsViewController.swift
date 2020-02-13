@@ -32,6 +32,7 @@ class DetailsViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        navigationController?.navigationBar.isHidden = true
         movienamelabel.text = movie!.title
         popularity.text = "\(movie!.popularity)"
         movieimageview.kf.setImage(with: URL(string: JsonParseData.jsonMoviesData.imageurl + movie!.poster_path), placeholder: nil, options: [], progressBlock: nil, completionHandler: nil)

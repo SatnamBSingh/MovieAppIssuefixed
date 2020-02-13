@@ -41,23 +41,23 @@ class ShowAllMoviesViewController: UIViewController,UITableViewDelegate,UITableV
     }
 
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        let currentcell = tableView.cellForRow(at: indexPath) as! ShowAllTableViewCell
+        let currentCell = tableView.cellForRow(at: indexPath) as! ShowAllTableViewCell
         let movie = getMoviesArrayData[indexPath.row]
-        movieDescription = currentcell.showAllMoviename.text
-        movieDescription = currentcell.releaseDate.text
-        movieDescription = currentcell.voteCount.text
+        movieDescription = currentCell.showAllMoviename.text
+        movieDescription = currentCell.releaseDate.text
+        movieDescription = currentCell.voteCount.text
         performSegue(withIdentifier: "showAlltoDetails", sender: movie)
     }
     
-    let screenname = "Showing TopRated"
+    let screenName = "Showing TopRated"
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         if (segue.identifier == "showAlltoDetails") {
             guard let movie  = sender as? AppleMoviesData else{
                 return
             }
-            let detailsvc =  segue.destination as! DetailsViewController
-            detailsvc.movie = movie
-            detailsvc.getMovieCatoegry = screenname
+            let detailsVc =  segue.destination as! DetailsViewController
+            detailsVc.movie = movie
+            detailsVc.getMovieCatoegry = screenName
             
         }
     }
@@ -66,6 +66,7 @@ class ShowAllMoviesViewController: UIViewController,UITableViewDelegate,UITableV
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        navigationController?.navigationBar.isHidden = false
         showAllMoviesTable.delegate = self
         showAllMoviesTable.dataSource = self
         pagenumber = 1

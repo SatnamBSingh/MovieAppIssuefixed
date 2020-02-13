@@ -2,6 +2,7 @@
 <model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="14460.32" systemVersion="18G103" minimumToolsVersion="Automatic" sourceLanguage="Swift" userDefinedModelVersionIdentifier="">
     <entity name="AppleMovies" representedClassName="AppleMovies" syncable="YES" codeGenerationType="class">
         <attribute name="id" optional="YES" attributeType="Double" defaultValueString="0" usesScalarValueType="YES" syncable="YES"/>
+        <attribute name="movieCateogory" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="original_language" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="original_title" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="popularity" optional="YES" attributeType="Double" defaultValueString="0" usesScalarValueType="YES" syncable="YES"/>
@@ -10,7 +11,7 @@
     </entity>
     <entity name="Entity" representedClassName="Entity" syncable="YES" codeGenerationType="class"/>
     <elements>
+        <element name="AppleMovies" positionX="-54" positionY="-9" width="128" height="150"/>
         <element name="Entity" positionX="-63" positionY="-18" width="128" height="45"/>
-        <element name="AppleMovies" positionX="-54" positionY="-9" width="128" height="135"/>
     </elements>
 </model>
